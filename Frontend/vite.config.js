@@ -9,6 +9,7 @@ export default defineConfig({
     tailwindcss(),
   ],
 })
+// rabbitred=#ea2eo
 
 // import { defineConfig } from 'vite'
 // import tailwindcss from '@tailwindcss/vite'
