@@ -82,7 +82,7 @@ const NavBar = () => {
           </div>
           <div className="p-4">
                <h2 className="text-xl font-semibold mb-8">Menu</h2>
-               <nav className="space-y-10">
+               {/* <nav className="space-y-10">
                 <Link to="#" onClick={toggleNavDrawer} className="block text-gray-600 hover:text-black border-b">
                   Men Collection
                 </Link>
@@ -95,7 +95,37 @@ const NavBar = () => {
                 <Link to="#" onClick={toggleNavDrawer} className="block text-gray-600 hover:text-black border-b">
                   Bottom Wear
                 </Link>
-               </nav>
+               </nav> */}
+               <nav className="space-y-10">
+    <Link
+        to="#"
+        onClick={toggleNavDrawer}
+        className="block bg-gradient-to-r from-green-400 via-blue-700 to-red-400 bg-clip-text text-transparent border-b transition duration-300 font-bold"
+    >
+        Men Collection
+    </Link>
+    <Link
+        to="#"
+        onClick={toggleNavDrawer}
+        className="block bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text text-transparent border-b transition duration-300 font-bold"
+    >
+        Women Collection
+    </Link>
+    <Link
+        to="#"
+        onClick={toggleNavDrawer}
+        className="block bg-gradient-to-r from-red-700 via-pink-200 to-orange-500 bg-clip-text text-transparent border-b transition duration-300 font-bold"
+    >
+        Top Wear
+    </Link>
+    <Link
+        to="#"
+        onClick={toggleNavDrawer}
+        className="block bg-gradient-to-r from-green-800 via-slate-900 to-purple-800 bg-clip-text text-transparent border-b transition duration-300 font-bold"
+    >
+        Bottom Wear
+    </Link>
+</nav>
           </div>
       </div>
     </>
