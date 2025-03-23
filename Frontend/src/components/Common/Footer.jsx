@@ -4,6 +4,7 @@ import { TbBrandInstagram, TbBrandMeta } from "react-icons/tb";
 import { MdOutlineCopyright } from "react-icons/md";
 import{FiPhoneCall} from "react-icons/fi"
 import { Link } from "react-router-dom";
+import SubInputTag from "./SubInputTag";
 
 const Footer = () => {
   return (
@@ -20,18 +21,19 @@ const Footer = () => {
             Sign up and get 10% of your first order.
           </p>
           <form action="" className="flex">
-            <input
+            {/* <input
               type="email"
               placeholder="Enter Your Email"
               className="p-3 w-full rounded-l-md text-sm border-l border-b border-gray-300 border-t focus:outline-none focus:ring-2 focus:ring-gray-500 transition-all"
               required
-            />
-            <button
+            /> */}
+            <SubInputTag/>
+            {/* <button
               type="submit"
-              className="bg-black text-white px-6 py-3 text-sm rounded-r-md hover:bg-gray-800"
+              className="bg-black cursor-pointer text-white px-6 py-3 text-sm rounded-r-md hover:bg-gray-800"
             >
               Subscribe
-            </button>
+            </button> */}
           </form>
         </div>
         {/* Shop Links */}
@@ -74,13 +76,13 @@ const Footer = () => {
         <div className="">
             <h3 className="text-lg text-gray-800 mb-4 font-bold">Follow Us</h3>
             <div className="flex items-center space-x-4 mb-6">
-                <a href="https://www.facebook.com" target="_blank" rel="noopener noreference" className="hover:text-gray-300">
+                <a href="https://www.facebook.com" target="_blank" rel="noopener noreference" className="text-blue-700">
                 <TbBrandMeta className="h-6 w-6"/>
                 </a>
-                <a href="https://www.instagram.com" target="_blank" rel="noopener noreference" className="hover:text-gray-300">
+                <a href="https://www.instagram.com" target="_blank" rel="noopener noreference" className="text-pink-700">
                 <TbBrandInstagram className="h-6 w-6"/>
                 </a>
-                <a href="https://www.twitter.com" target="_blank" rel="noopener noreference" className="hover:text-gray-300">
+                <a href="https://www.twitter.com" target="_blank" rel="noopener noreference" className="text-blue-500">
                 <RiTwitterLine className="h-6 w-6"/>
                 </a>
             </div>
