@@ -6,6 +6,7 @@ import {Toaster} from "sonner"
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 import Profile from "./pages/Profile.jsx";
+import CollectionPage from "./pages/CollectionPage.jsx";
 const App = () => {
   return (
     <div>
@@ -16,6 +17,7 @@ const App = () => {
           <Route path="/login" element={<Login/>}/>
           <Route path="/register" element={<Register/>}/>
           <Route path="/profile" element={<Profile/>}/>
+          <Route path="/collection/:collection" element={<CollectionPage/>}/>
         </Route>
         {/* User Layout */}
         <Route />

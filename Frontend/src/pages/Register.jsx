@@ -12,7 +12,7 @@ const Register = () => {
   return (
     <div className="w-[75%] flex items-center justify-center p-6 mx-auto">
       <form onSubmit={handleSubmit}>
-        <div className="flex flex-col p-5 shadow-lg rounded-lg">
+        <div className="flex flex-col p-5 shadow-2xl rounded-lg mt-4 bg-gray-50">
           <h2 className="text-center mb-2 text-lg font-semibold">Rabbit</h2>
           <h3 className="text-center text-3xl font-bold mb-3">Hey there!👋</h3>
           <p className="text-center text-sm text-gray-800 mb-2">

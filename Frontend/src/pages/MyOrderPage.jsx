@@ -63,7 +63,7 @@ const MyOrderPage = () => {
                                 #{order._id}
                             </td>
                             <td className='text-sm text-black p-2 sm:p-4 '>
-                                {new Date(order.createdAt).toLocaleDateString()}{" "}
+                                {new Date(order.createdAt).toLocaleDateString()}{" "}<br/>
                                 {new Date(order.createdAt).toLocaleTimeString()}
                             </td>
                             <td className='p-2 sm:p-4 text-sm text-black'>
@@ -73,7 +73,7 @@ const MyOrderPage = () => {
                                 ${order?.totatPrice}
                             </td>
                             <td className='p-2 sm:p-4 text-sm font-semibold'>
-                              <span className={`p-2 rounded-sm ${order.isPaid?"bg-green-300 text-white":"bg-red-300 text-white"}`}>{order.isPaid?"Paid":"Pending"}</span>
+                              <span className={`p-2 rounded-sm duration-200 ${order.isPaid?"bg-green-500 hover:bg-green-300 hover:text-black text-white":"bg-red-600 hover:bg-red-300 hover:text-black text-white"}`}>{order.isPaid?"Paid":"Pending"}</span>
                             </td>
                           </tr>
                         ))
