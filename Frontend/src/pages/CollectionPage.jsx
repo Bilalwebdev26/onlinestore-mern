@@ -72,6 +72,10 @@ function CollectionPage() {
   useEffect(() => {
     //close sidebar if close outside add event listner
     document.addEventListener("mouseover", closeSideBar);
+    //clean event listner
+    return()=>{
+      document.removeEventListener("mousemove",closeSideBar)
+    }
   }, []);
   return (
     <div className="flex flex-col lg:flex-row">
