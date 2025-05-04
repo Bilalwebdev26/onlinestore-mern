@@ -15,7 +15,7 @@ function FeatureCollection() {
             fashion and function . Designed to make you look and feel great
             every day.
           </p>
-          <Link to='/collections/all' className="py-3 px-6 bg-black  text-white text-lg rounded-lg transition-all hover:bg-gray-800">
+          <Link to='/collection/all' className="py-3 px-6 bg-black  text-white text-lg rounded-lg transition-all hover:bg-gray-800">
             Shop Now
           </Link>
         </div>

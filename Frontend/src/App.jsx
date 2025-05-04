@@ -10,6 +10,8 @@ import CollectionPage from "./pages/CollectionPage.jsx";
 import BestSeller from "./components/Products/BestSeller.jsx";
 import Checkout from "./components/Cart/Checkout.jsx";
 import OrderConfigration from "./pages/OrderConfigration.jsx";
+import OrderDetail from "./pages/OrderDetail.jsx";
+import MyOrderPage from "./pages/MyOrderPage.jsx";
 const App = () => {
   return (
     <div>
@@ -24,6 +26,8 @@ const App = () => {
           <Route path="/product/:id" element={<BestSeller />} />
           <Route path="/checkout" element={<Checkout/>}/>
           <Route path="/order-configration" element={<OrderConfigration/>}/>
+          <Route path="/order/:id" element={<OrderDetail/>}/>
+          <Route path="/my-orders" element={<MyOrderPage/>}/>
         </Route>
         {/* User Layout */}
         <Route />
