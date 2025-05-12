@@ -58,7 +58,7 @@ export const login = async (req, res) => {
     if (!checkPassword) {
       throw new apiError(400, "Password Not Matched");
     }
-    const { refreshToken, accessToken } = generateAccessAndRefereshTokens(
+    const { refreshToken, accessToken } = await generateAccessAndRefereshTokens(
       user._id
     );
     const option={
@@ -78,3 +78,25 @@ export const login = async (req, res) => {
     res.status(500).json({ message: error.message }, "Login catch error");
   }
 };
+
+export const logout = async(req,res)=>{
+  try {
+    res.clearCookie("accessToken")
+    res.clearCookie("refreshToken")
+    return res.status(200).json({message:`${req.user._id} Logout SuccessFully`})
+  } catch (error) {
+    res.status(500).json({ message: error.message }, "Logout catch error");
+  }
+}
+
+export const profile = async(req,res)=>{
+   try {
+    const user = await User.findById(req.user._id).select("-password -refreshToken")
+    if(!user){
+        throw new apiError(401,"Inavlid user")
+    }
+    return res.status(200).json(new apiResponse(200,`Show user profile ${user._id}`,user))
+   } catch (error) {
+    return res.status(500).json({message:`${error.message} Error while fetching Profile `})
+   }
+}
