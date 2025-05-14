@@ -23,7 +23,6 @@ export const createCart = async (req, res) => {
     }
     //Determine user is loggedIn or guest
     let cart = await getCart(user, guestId);
-    console.log("Cart : ", cart);
     //if cart exist update it
     if (cart) {
       const productIndex = cart.products.findIndex(
@@ -163,12 +162,12 @@ export const mergeCart = async(req,res)=>{
     const guestCart = await Cart.findOne({guestId})
     const userCart = await Cart.findOne({user:req.user?._id})
     if(guestCart){
-      if(guestCart.length===0){
+      if(guestCart.products.length===0){
         throw new apiError(404,"Guest Cart is Empty")
       }
       if(userCart){
         guestCart.products.forEach((guestItem)=>{
-          const productIndex = guestCart.products.findIndex((item)=>item.productId.toString()===guestItem.productId.toString() && item.sizes === sizes && item.color === color)
+          const productIndex = userCart.products.findIndex((item)=>item.productId.toString()===guestItem.productId.toString() && item.sizes === guestItem.sizes && item.color === guestItem.color)
           if(productIndex>-1){
             //if the item exist in the user cart update the quantity
                 userCart.products[productIndex].quantity+=guestItem.quantity
