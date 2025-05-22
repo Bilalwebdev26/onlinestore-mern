@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import dotenv from "dotenv"
 
 const app = express();
 import userRoutes from "../Backend/Routes/user.routes.js";
@@ -14,10 +15,15 @@ import adminRoutes from "../Backend/Routes/admin.routes.js";
 import adminProduct from "../Backend/Routes/productAdmin.routes.js";
 import adminOrder from "../Backend/Routes/orderAdmin.routes.js";
 
-app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
+dotenv.config();
+const corsOptions = {
+  origin: process.env.FRONTEND_URL, // or true for all origins
+  credentials: true // THIS is the important part
+};
 
+app.use(cors(corsOptions));
 //User Routes
 app.use("/api/users", userRoutes);
 //Product Routes

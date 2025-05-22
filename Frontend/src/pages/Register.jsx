@@ -1,14 +1,17 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
-
+import { registerUser } from "../redux/slices/auth.slice.js";
+import { useDispatch } from "react-redux";
 const Register = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const handleSubmit = (e)=>{
-    e.preventDefault()
-    console.log("User Registered : ",{name,email,password})
-  }
+  const dispatch = useDispatch()
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log("User Registered : ", { name, email, password });
+    dispatch(registerUser({name, email, password}))
+  };
   return (
     <div className="w-[75%] flex items-center justify-center p-6 mx-auto">
       <form onSubmit={handleSubmit}>

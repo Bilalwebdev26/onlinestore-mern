@@ -23,9 +23,11 @@ export const register = async (req, res) => {
   try {
     let user = await User.findOne({ email });
     if (user) {
-      throw new apiError(400, "User already Exist");
+      return res.status(400).json({message:"User Already Exist"})
+      //throw new apiError(400, "User already Exist");
     }
     user = new User({ name, email, password });
+    console.log("Register User : ",user)
     await user.save();
     const { refreshToken, accessToken } = await generateAccessAndRefereshTokens(
       user._id
@@ -37,6 +39,7 @@ export const register = async (req, res) => {
     const selectedUser = await User.findById(user._id).select(
       "-password -refreshtoken"
     );
+    console.log("Selected User : ",selectedUser)
     return res
       .status(201)
       .cookie("refreshToken", refreshToken, option)
@@ -49,6 +52,7 @@ export const register = async (req, res) => {
 };
 export const login = async (req, res) => {
   const { email, password } = req.body;
+  console.log("Name : ",email,"Email : ",password)
   try {
     const user = await User.findOne({ email });
     if (!user) {
@@ -68,6 +72,7 @@ export const login = async (req, res) => {
     const selectedUser = await User.findById(user._id).select(
       "-password -refreshtoken"
     );
+    console.log("Selected User : ",selectedUser)
     return res
       .status(200)
       .cookie("refreshToken",refreshToken,option)

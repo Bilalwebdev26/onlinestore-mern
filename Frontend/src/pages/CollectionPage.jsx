@@ -64,6 +64,7 @@ function CollectionPage() {
     }, 1000);
   }, []);
   const closeSideBar = (e) => {
+    console.log(sidebarRef.current.contains(e.target))
     //close sidebar if close outside
     if (sidebarRef.current && !sidebarRef.current.contains(e.target)) {
       setSidebar(false);
