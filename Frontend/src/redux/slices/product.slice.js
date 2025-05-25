@@ -74,7 +74,7 @@ export const similarProducts = createAsyncThunk(
   }
 );
 
-const productSlice = createSlice({
+export const productSlice = createSlice({
   name: "product",
   initialState: {
     products: [],
@@ -116,20 +116,63 @@ const productSlice = createSlice({
       };
     },
   },
-  extraReducers:(builder)=>{
-     builder.addCase(fetchProduct.pending,(state,action)=>{
-        state.loading=true,
-        state.error=null
-     })
-     .addCase(fetchProduct.fulfilled,(state,action)=>{
-        state.loading=false,
-        state.products=Array.isArray(action.payload)?action.payload:[]
-     })
-     .addCase(fetchProduct.rejected,(state,action)=>{
-        state.loading=false,
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchProduct.pending, (state, action) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchProduct.fulfilled, (state, action) => {
+        state.loading = false;
+        state.products = Array.isArray(action.payload) ? action.payload : [];
+      })
+      .addCase(fetchProduct.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+      .addCase(fetchProductById.pending, (state, action) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchProductById.fulfilled, (state, action) => {
+        state.loading = false;
+        state.selectedProducts = action.payload;
+      })
+      .addCase(fetchProductById.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+      .addCase(updateProduct.pending, (state, action) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateProduct.fulfilled, (state, action) => {
+        state.loading = false;
+        const updatedProduct = action.payload;
+        const index = state.products.findIndex(
+          (product) => product._id === updateProduct._id
+        );
+        if (index !== -1) {
+          state.products[index] = updateProduct;
+        }
+      })
+      .addCase(updateProduct.rejected,(state,action)=>{
+        state.loading=false
         state.error=action.error.message
-     })
-  }
+      })
+      .addCase(similarProducts.pending,(state,action)=>{
+        state.loading=true
+        state.error=null
+      })
+      .addCase(similarProducts.fulfilled,(state,action)=>{
+        state.loading=false
+        state.similarProducts=Array.isArray(action.payload)?action.payload:[]
+      })
+      .addCase(similarProducts.rejected,(state,action)=>{
+        state.loading=false
+        state.error=action.error.message
+      })
+  },
 });
 
 //delete product
@@ -164,3 +207,6 @@ export const bestSellerProduct = createAsyncThunk(
   }
 );
 //createProduct
+
+export const {setFilter,clearFilter} = productSlice.actions
+export default productSlice.reducer
