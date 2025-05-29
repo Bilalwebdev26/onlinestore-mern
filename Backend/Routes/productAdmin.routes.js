@@ -4,6 +4,6 @@ import { deleteProduct, showAllProduct } from "../controllers/adminProduct.contr
 const router = express.Router()
 
 router.get("/all",protectedRoute,checkAdmin,showAllProduct)
-router.get("/delete/:id",protectedRoute,checkAdmin,deleteProduct)
+router.delete("/delete/:id",protectedRoute,checkAdmin,deleteProduct)
 
 export default router
