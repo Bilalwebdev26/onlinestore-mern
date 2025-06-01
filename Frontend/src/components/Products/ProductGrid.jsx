@@ -1,6 +1,13 @@
 import React from "react";
 import { Link } from "react-router-dom";
-function ProductGrid({ products }) {
+function ProductGrid({ products,loading,error }) {
+  console.log("Products from grid : ",products)
+  if(loading){
+    return <p className="text-center text-3xl font-black">Loading....</p>
+  }
+  if(error){
+    return <p className="text-center text-2xl font-mono">Error : {error}</p>
+  }
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 ">
       {products.map((product,index) => (

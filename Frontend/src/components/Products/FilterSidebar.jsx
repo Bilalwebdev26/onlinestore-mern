@@ -15,7 +15,7 @@ function FilterSidebar() {
     maxPrice: 100,
   });
   const [priceRange, setPriceRange] = useState([0, 100]);
-  const categories = ["Top Wears", "Bottom Wears"];
+  const categories = ["Top Wear", "Bottom Wear"];
   const colors = [
     "Red",
     "Blue",
@@ -47,7 +47,7 @@ function FilterSidebar() {
     "Fashionista",
     "ChicStyle",
   ];
-  const genders = ["Men", "Women"];
+  const genders = ["male", "Female"];
   useEffect(() => {
     const params = Object.fromEntries([...searchParams]);
     //{category:"top-wear",maxPrice:100}=>params.category
@@ -132,7 +132,7 @@ function FilterSidebar() {
       {/* Gender Filter*/}
       <div className="mb-6">
         <label htmlFor="" className="block font-bold mb-2">
-          Category
+          Gender
         </label>
         {genders.map((gender) => (
           <div className="flex items-center mb-1" key={gender}>

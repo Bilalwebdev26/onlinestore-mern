@@ -8,10 +8,12 @@ import {
 import SearchBar from "../Common/SearchBar";
 import CartDrawer from "./CartDrawer";
 import { IoMdClose } from "react-icons/io";
+import { useSelector } from "react-redux";
 
 const NavBar = () => {
   const[drawerOpen,setDrawerOpen]=useState(false)
   const[navDrawerOpen,setNavDrawerOpen]=useState(false)
+  const{cart}=useSelector((state)=>state.cart)
   const toggleCartDrawer = ()=>{
       setDrawerOpen(!drawerOpen)
   }
@@ -28,25 +30,25 @@ const NavBar = () => {
         </div>
         <div className="hidden md:flex space-x-6">
           <Link
-            to="/collection/all"
+            to="/collection/all?gender=male"
             className="text-gray-700 hover:text-black text-sm font-medium uppercase"
           >
             Men
           </Link>
           <Link
-            to="#"
+            to="/collection/all?gender=Female"
             className="text-gray-700 hover:text-black text-sm font-medium uppercase"
           >
             Women
           </Link>
           <Link
-            to="#"
+            to="/collection/all?category=Top+Wear"
             className="text-gray-700 hover:text-black text-sm font-medium uppercase"
           >
             Top Wear
           </Link>
           <Link
-            to="#"
+            to="/collection/all?category=Bottom+Wear"
             className="text-gray-700 hover:text-black text-sm font-medium uppercase"
           >
             Bottom Wear
@@ -61,7 +63,7 @@ const NavBar = () => {
           <button onClick={toggleCartDrawer} className="relative hover:text-black">
             <HiOutlineShoppingBag className="h-6 w-6 cursor-pointer" />
             <span className="absolute -top-2.5 bg-red-600 px-2 rounded-full text-white text-xs py-1 cursor-pointer">
-              4
+              {cart.length == 0?"0":cart.length}//14:08
             </span>
           </button>
           <SearchBar />
@@ -99,28 +101,28 @@ const NavBar = () => {
                </nav> */}
                <nav className="space-y-10">
     <Link
-        to="#"
+        to="/collection/all?gender=male"
         onClick={toggleNavDrawer}
         className="block bg-gradient-to-r from-green-400 via-blue-700 to-red-400 bg-clip-text text-transparent border-b transition duration-300 font-bold"
     >
         Men Collection
     </Link>
     <Link
-        to="#"
+        to="/collection/all?gender=Female"
         onClick={toggleNavDrawer}
         className="block bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text text-transparent border-b transition duration-300 font-bold"
     >
         Women Collection
     </Link>
     <Link
-        to="#"
+        to="/collection/all?category=Top+Wear"
         onClick={toggleNavDrawer}
         className="block bg-gradient-to-r from-red-700 via-pink-200 to-orange-500 bg-clip-text text-transparent border-b transition duration-300 font-bold"
     >
         Top Wear
     </Link>
     <Link
-        to="#"
+        to="/collection/all?category=Bottom+Wear"
         onClick={toggleNavDrawer}
         className="block bg-gradient-to-r from-green-800 via-slate-900 to-purple-800 bg-clip-text text-transparent border-b transition duration-300 font-bold"
     >

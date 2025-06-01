@@ -19,7 +19,7 @@ export const fecthCart = createAsyncThunk(
         `${import.meta.env.VITE_BACKEND_URL}/cart/all`,
         { params: { user, guestId } }
       );
-      return response.data;
+      return response.data.data;
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message || "Error in fetching cart"
@@ -37,9 +37,10 @@ export const addItemInCart = createAsyncThunk(
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/cart`,
-        { data: { quantity, productId, user, sizes, color, guestId } }
+         { quantity, productId, user, sizes, color, guestId } 
       );
-      return response.data;
+      console.log("Cart : ",response.data.data)
+      return response.data.data;
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message || "Failed to add item"
@@ -57,9 +58,10 @@ export const updateQuan = createAsyncThunk(
     try {
       const response = await axios.put(
         `${import.meta.env.VITE_BACKEND_URL}/cart/changeQunatity`,
-        { data: { quantity, productId, user, sizes, color, guestId } }
+        { quantity, productId, user, sizes, color, guestId}
       );
-      return response.data;
+      console.log("Cart response:", response.data.data);
+      return response.data.data;
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message || "Failed to update Quantity"

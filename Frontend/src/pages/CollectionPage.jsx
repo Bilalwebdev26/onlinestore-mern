@@ -3,66 +3,27 @@ import { FaFilter } from "react-icons/fa";
 import FilterSidebar from "../components/Products/FilterSidebar";
 import SortOption from "../components/Products/SortOption";
 import ProductGrid from "../components/Products/ProductGrid";
+import{useDispatch, useSelector} from "react-redux"
+import { fetchProduct } from "../redux/slices/product.slice.js";
+import { useParams, useSearchParams } from "react-router-dom";
 
 function CollectionPage() {
-  const [products, setProducts] = useState([]);
+  const {collection} = useParams()
+  const[searchParams] = useSearchParams()
+  const {products,loading,error} = useSelector((state)=>state.product)
+  const dispatch = useDispatch()
+  const queryParams = Object.fromEntries([...searchParams])
+  console.log("Collection : ",collection)
+  console.log("Search Params ", searchParams)
+  console.log("Query Params :",queryParams)
+  //const [products, setProducts] = useState([]);
   const [sidebar, setSidebar] = useState(false);
   const sidebarRef = useRef(null);
+
   useEffect(() => {
-    setTimeout(() => {
-      const similarProduct = [
-        {
-          _id: 1,
-          name: "Product 1",
-          price: 100,
-          images: [{ url: "https://picsum.photos/500/500/?random=2" }],
-        },
-        {
-          _id: 2,
-          name: "Product 2",
-          price: 100,
-          images: [{ url: "https://picsum.photos/500/500/?random=3" }],
-        },
-        {
-          _id: 3,
-          name: "Product 3",
-          price: 100,
-          images: [{ url: "https://picsum.photos/500/500/?random=4" }],
-        },
-        {
-          _id: 4,
-          name: "Product 4",
-          price: 100,
-          images: [{ url: "https://picsum.photos/500/500/?random=5" }],
-        },
-        {
-          _id: 5,
-          name: "Product 1",
-          price: 100,
-          images: [{ url: "https://picsum.photos/500/500/?random=2" }],
-        },
-        {
-          _id: 6,
-          name: "Product 2",
-          price: 100,
-          images: [{ url: "https://picsum.photos/500/500/?random=3" }],
-        },
-        {
-          _id: 7,
-          name: "Product 3",
-          price: 100,
-          images: [{ url: "https://picsum.photos/500/500/?random=4" }],
-        },
-        {
-          _id: 8,
-          name: "Product 4",
-          price: 100,
-          images: [{ url: "https://picsum.photos/500/500/?random=5" }],
-        },
-      ];
-      setProducts(similarProduct);
-    }, 1000);
-  }, []);
+    dispatch(fetchProduct({collection,...queryParams}))
+  }, [dispatch,collection,searchParams]);
+  
   const closeSideBar = (e) => {
     console.log(sidebarRef.current.contains(e.target))
     //close sidebar if close outside
@@ -104,7 +65,7 @@ function CollectionPage() {
         {/* Sort options */}
         <SortOption/>
         {/* Product Grid */}
-        <ProductGrid products={products}/>
+        <ProductGrid products={products} loading={loading} error={error}/>
       </div>
     </div>
   );

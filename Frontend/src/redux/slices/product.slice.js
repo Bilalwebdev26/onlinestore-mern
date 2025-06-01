@@ -18,8 +18,8 @@ export const fetchProduct = createAsyncThunk(
     limit,
   }) => {
     const query = new URLSearchParams();
-    if (collection) query.append("collection", collection);
-    if (size) query.append("size", size);
+    if (collection) query.append("collections", collection);
+    if (size) query.append("sizes", size);
     if (gender) query.append("gender", gender);
     if (color) query.append("color", color);
     if (minPrice) query.append("minPrice", minPrice);
@@ -31,10 +31,11 @@ export const fetchProduct = createAsyncThunk(
     if (brand) query.append("brand", brand);
     if (limit) query.append("limit", limit);
     const response = await axios.get(
-      `${import.meta.env.VITE_BACKEND_URL}/products?${query.toString()}`
+      `${import.meta.env.VITE_BACKEND_URL}/products/all?${query.toString()}`
     );
+    console.log(`${import.meta.env.VITE_BACKEND_URL}/products?${query.toString()}`)
     console.log("Response : ", response);
-    return response.data;
+    return response.data.data;
   }
 );
 
@@ -46,7 +47,7 @@ export const fetchProductById = createAsyncThunk(
       `${import.meta.env.VITE_BACKEND_URL}/products/${id}`
     );
     console.log("Response : ", response);
-    return response.data;
+    return response.data.data;
   }
 );
 //update product
@@ -60,17 +61,27 @@ export const updateProduct = createAsyncThunk(
         withCredentials: true, // 🔒 this sends cookies (access/refresh) with the request
       }
     );
-    return response.data;
+    return response.data.data;
   }
 );
 //simillar product
-export const similarProducts = createAsyncThunk(
+export const fetchSimilarProducts = createAsyncThunk(
   "product/similarProduct",
   async ({ id }) => {
     const response = await axios.get(
       `${import.meta.env.VITE_BACKEND_URL}/products/simillar/${id}`
     );
-    return response.data;
+    return response.data.data;
+  }
+);
+//newArrivals
+export const newArrivalsProducts = createAsyncThunk(
+  "product/newArrivals",
+  async () => {
+    const response = await axios.get(
+      `${import.meta.env.VITE_BACKEND_URL}/products/newArrivals`
+    );
+    return response.data.data;
   }
 );
 
@@ -80,6 +91,7 @@ export const productSlice = createSlice({
     products: [],
     selectedProducts: null,
     similarProducts: [],
+    newArrivals:[],
     loading: false,
     error: null,
     filters: {
@@ -125,6 +137,7 @@ export const productSlice = createSlice({
       .addCase(fetchProduct.fulfilled, (state, action) => {
         state.loading = false;
         state.products = Array.isArray(action.payload) ? action.payload : [];
+        console.log("Current products:", JSON.parse(JSON.stringify(state.products)));
       })
       .addCase(fetchProduct.rejected, (state, action) => {
         state.loading = false;
@@ -137,6 +150,7 @@ export const productSlice = createSlice({
       .addCase(fetchProductById.fulfilled, (state, action) => {
         state.loading = false;
         state.selectedProducts = action.payload;
+        console.log("Slected from slice : ",state.selectedProducts)
       })
       .addCase(fetchProductById.rejected, (state, action) => {
         state.loading = false;
@@ -150,7 +164,7 @@ export const productSlice = createSlice({
         state.loading = false;
         const updatedProduct = action.payload;
         const index = state.products.findIndex(
-          (product) => product._id === updateProduct._id
+          (product) => product._id === updatedProduct._id
         );
         if (index !== -1) {
           state.products[index] = updateProduct;
@@ -160,15 +174,27 @@ export const productSlice = createSlice({
         state.loading=false
         state.error=action.error.message
       })
-      .addCase(similarProducts.pending,(state,action)=>{
+      .addCase(fetchSimilarProducts.pending,(state,action)=>{
         state.loading=true
         state.error=null
       })
-      .addCase(similarProducts.fulfilled,(state,action)=>{
+      .addCase(fetchSimilarProducts.fulfilled,(state,action)=>{
         state.loading=false
         state.similarProducts=Array.isArray(action.payload)?action.payload:[]
       })
-      .addCase(similarProducts.rejected,(state,action)=>{
+      .addCase(fetchSimilarProducts.rejected,(state,action)=>{
+        state.loading=false
+        state.error=action.error.message
+      })
+      .addCase(newArrivalsProducts.pending,(state,action)=>{
+        state.loading=true
+        state.error=null
+      })
+      .addCase(newArrivalsProducts.fulfilled,(state,action)=>{
+        state.loading=false
+        state.newArrivals=Array.isArray(action.payload)?action.payload:[]
+      })
+      .addCase(newArrivalsProducts.rejected,(state,action)=>{
         state.loading=false
         state.error=action.error.message
       })
@@ -182,16 +208,6 @@ export const deleteProduct = createAsyncThunk(
     const response = await axios.delete(
       `${import.meta.env.VITE_BACKEND_URL}/products/delete/${id}`,
       { withCredentials: true }
-    );
-    return response.data;
-  }
-);
-//newArrivals
-export const newArrivalsProducts = createAsyncThunk(
-  "product/newArrivals",
-  async () => {
-    const response = await axios.get(
-      `${import.meta.env.VITE_BACKEND_URL}/products/newArrivals`
     );
     return response.data;
   }

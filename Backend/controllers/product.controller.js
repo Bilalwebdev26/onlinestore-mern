@@ -195,9 +195,11 @@ export const showAllProduct = async (req, res) => {
           break;
       }
     }
+    console.log("Query : ",query)
     let product = await Product.find(query)
       .sort(sort)
-      .limit(Number(limit) || 0);
+      //.limit(Number(limit) || 0);
+    console.log("Products : ",product)
     return res
       .status(200)
       .json(
