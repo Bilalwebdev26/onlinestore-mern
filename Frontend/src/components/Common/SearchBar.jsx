@@ -1,16 +1,24 @@
 import React, { useState } from "react";
 import { HiMagnifyingGlass } from "react-icons/hi2";
 import { HiOutlineXMark } from "react-icons/hi2";
-
+import { useDispatch, useSelector } from "react-redux";
+import { fetchProduct } from "../../redux/slices/product.slice";
+import {useNavigate} from "react-router-dom"
 const SearchBar = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [isopen, setIsOpen] = useState(false);
+  const dispatch = useDispatch()
+  const{products,loading,error}=useSelector((state)=>state.product)
+  const navigate = useNavigate()
   const handleSearchToggle = () => {
     setIsOpen(!isopen);
   };
   const handleSubmit = (e)=>{
     e.preventDefault()
     console.log("Search Term : ",searchTerm)
+    dispatch(fetchProduct({search:searchTerm}))
+    navigate(`/collection/all?search=${searchTerm}`)
+    setIsOpen(false);
   }
   return (
     <div
