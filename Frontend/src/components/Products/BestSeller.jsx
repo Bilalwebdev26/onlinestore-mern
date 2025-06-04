@@ -445,12 +445,12 @@ const BestSeller = ({ productId }) => {
     setIsButtonDisabled(true);
     dispatch(
       addItemInCart({
-        productId: productFetchById,
-        quantity,
-        sizes: selecetSize,
-        color: selectColor,
-        guestId,
         user: user?._id,
+        guestId,
+        productId: productFetchById,
+        sizes: selecetSize,
+        quantity,
+        color: selectColor,
       })
     )
       .then(() => {
@@ -510,24 +510,26 @@ const BestSeller = ({ productId }) => {
   //   );
   // };
   const renderMainImage = () => {
-  const image = selectedProducts?.images?.find(img => img.url === mainImage);
-
-  if (!image) {
-    return (
-      <div className="w-full h-[400px] flex items-center justify-center bg-gray-100">
-        <p className="text-gray-500">Image not available</p>
-      </div>
+    const image = selectedProducts?.images?.find(
+      (img) => img.url === mainImage
     );
-  }
 
-  return (
-    <img
-      src={image.url}
-      alt={image.altText}
-      className="w-full h-auto object-cover rounded-lg"
-    />
-  );
-};
+    if (!image) {
+      return (
+        <div className="w-full h-[400px] flex items-center justify-center bg-gray-100">
+          <p className="text-gray-500">Image not available</p>
+        </div>
+      );
+    }
+
+    return (
+      <img
+        src={image.url}
+        alt={image.altText}
+        className="w-full h-auto object-cover rounded-lg"
+      />
+    );
+  };
 
   console.log("Selected : ", selectedProducts);
   console.log("Similar : ", similarProducts);
@@ -638,9 +640,7 @@ const BestSeller = ({ productId }) => {
                   ${selectedProducts?.discountPrice}
                 </p>
                 <p className="text-lg text-gray-600 mb-1 line-through">
-                  
-                  {selectedProducts?.price &&
-                    `$${selectedProducts?.price}`}
+                  {selectedProducts?.price && `$${selectedProducts?.price}`}
                 </p>
               </div>
               <p className="text-gray-600 mb-4">
@@ -649,7 +649,7 @@ const BestSeller = ({ productId }) => {
               <div className="mb-4">
                 <p className="text-gray-700 font-semibold">Colors:</p>
                 <div className="flex gap-2 mt-2">
-                  {console.log("Colors : ",selectedProducts.color)}
+                  {console.log("Colors : ", selectedProducts.color)}
                   {selectedProducts.color.map((color, index) => (
                     <button
                       key={index}

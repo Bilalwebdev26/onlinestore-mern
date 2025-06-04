@@ -1,17 +1,35 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { registerUser } from "../redux/slices/auth.slice.js";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { mergeCart } from "../redux/slices/cart.Slice.js";
 const Register = () => {
+  const { user, guestId, loading, error } = useSelector((state) => state.auth);
+  const { cart } = useSelector((state) => state.cart);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const dispatch = useDispatch()
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const location = useLocation();
+  const redirect = new URLSearchParams(location.search).get("redirect") || "/";
+  const isCheckoutPresent = redirect.includes("checkout");
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("User Registered : ", { name, email, password });
-    dispatch(registerUser({name, email, password}))
+    dispatch(registerUser({ name, email, password }));
   };
+   useEffect(() => {
+    if (user) {
+      if (cart?.products?.length > 0 && guestId) {
+        dispatch(mergeCart({ guestId, user })).then(() => {
+          navigate(isCheckoutPresent ? "/checkout" : "/");
+        });
+      } else {
+        navigate(isCheckoutPresent ? "/checkout" : "/");
+      }
+    }
+  }, [navigate, dispatch, isCheckoutPresent, user, guestId, cart]);
   return (
     <div className="w-[75%] flex items-center justify-center p-6 mx-auto">
       <form onSubmit={handleSubmit}>
@@ -71,7 +89,7 @@ const Register = () => {
           </button>
           <p className="text-sm text-center font-medium">
             Do you have an account?
-            <Link to="/login" className="text-blue-500">
+            <Link to={`/login?redirect=${encodeURIComponent(redirect)}`} className="text-blue-500">
               Login
             </Link>
           </p>

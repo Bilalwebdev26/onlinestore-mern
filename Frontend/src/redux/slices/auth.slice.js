@@ -47,11 +47,11 @@ export const registerUser = createAsyncThunk(
         userData,
         { withCredentials: true }
       );
-      console.log("response : ",response)
+      console.log("response : ", response);
       localStorage.setItem("userInfo", JSON.stringify(response.data.data));
       return response.data.data;
     } catch (error) {
-        console.log("error : ",error)
+      console.log("error : ", error);
       return rejectWithValue(
         error?.response?.data?.message || "Register User Failed"
       );
@@ -59,14 +59,40 @@ export const registerUser = createAsyncThunk(
   }
 );
 
-export const logoutUser = createAsyncThunk(
-  "auth/logoutUser",
-  async (userData, { rejectWithValue }) => {
+export const userProfile = createAsyncThunk(
+  "auth/userProfile",
+  async (_, { rejectWithValue }) => {
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_BACKEND_URL}/users/logout`
+        `${import.meta.env.VITE_BACKEND_URL}/users/profile`,
+        {
+          withCredentials: true,
+        }
       );
-    } catch (error) {}
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(
+        error?.response?.data?.message || "Error in User Profile"
+      );
+    }
+  }
+);
+
+export const logoutUser = createAsyncThunk(
+  "auth/logoutUser",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_BACKEND_URL}/users/logout`,{
+          withCredentials:true
+        }
+      );
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(
+        error?.response?.data?.message || "Error in User Logout"
+      );
+    }
   }
 );
 
@@ -75,11 +101,11 @@ export const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    logout: (state) => {
-      (state.user = null), (state.guestId = `guestId_${new Date().getTime()}`);
-      localStorage.removeItem("userInfo");
-      localStorage.setItem("guestId", state.guestId);
-    },
+    // logout: (state) => {
+    //   (state.user = null), (state.guestId = `guestId_${new Date().getTime()}`);
+    //   localStorage.removeItem("userInfo");
+    //   localStorage.setItem("guestId", state.guestId);
+    // },
     generateNewGuestId: (state) => {
       state.guestId = `guestId_${new Date().getTime()}`;
       localStorage.setItem("guestId", state.guestId);
@@ -93,7 +119,7 @@ export const authSlice = createSlice({
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
+        state.user = action.payload;
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
@@ -105,11 +131,40 @@ export const authSlice = createSlice({
       })
       .addCase(registerUser.fulfilled, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
+        state.user = action.payload;
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload.message;
+      })
+      .addCase(userProfile.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(userProfile.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload;
+      })
+      .addCase(userProfile.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(logoutUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(logoutUser.fulfilled, (state) => {
+        state.loading = false;
+        state.user = null;
+        state.guestId = `guestId_${new Date().getTime()}`;
+        state.cart = { products: [] };
+        localStorage.removeItem("userInfo");
+        localStorage.removeItem("cart");  
+        localStorage.setItem("guestId", state.guestId);
+      })
+      .addCase(logoutUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       });
   },
 });

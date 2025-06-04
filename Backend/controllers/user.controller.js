@@ -23,11 +23,11 @@ export const register = async (req, res) => {
   try {
     let user = await User.findOne({ email });
     if (user) {
-      return res.status(400).json({message:"User Already Exist"})
+      return res.status(400).json({ message: "User Already Exist" });
       //throw new apiError(400, "User already Exist");
     }
     user = new User({ name, email, password });
-    console.log("Register User : ",user)
+    console.log("Register User : ", user);
     await user.save();
     const { refreshToken, accessToken } = await generateAccessAndRefereshTokens(
       user._id
@@ -39,7 +39,7 @@ export const register = async (req, res) => {
     const selectedUser = await User.findById(user._id).select(
       "-password -refreshtoken"
     );
-    console.log("Selected User : ",selectedUser)
+    console.log("Selected User : ", selectedUser);
     return res
       .status(201)
       .cookie("refreshToken", refreshToken, option)
@@ -52,7 +52,7 @@ export const register = async (req, res) => {
 };
 export const login = async (req, res) => {
   const { email, password } = req.body;
-  console.log("Name : ",email,"Email : ",password)
+  console.log("Name : ", email, "Email : ", password);
   try {
     const user = await User.findOne({ email });
     if (!user) {
@@ -65,18 +65,18 @@ export const login = async (req, res) => {
     const { refreshToken, accessToken } = await generateAccessAndRefereshTokens(
       user._id
     );
-    const option={
-        httpOnly:true,
-        secure:true
-    }
+    const option = {
+      httpOnly: true,
+      secure: true,
+    };
     const selectedUser = await User.findById(user._id).select(
       "-password -refreshtoken"
     );
-    console.log("Selected User : ",selectedUser)
+    console.log("Selected User : ", selectedUser);
     return res
       .status(200)
-      .cookie("refreshToken",refreshToken,option)
-      .cookie("accessToken",accessToken,option)
+      .cookie("refreshToken", refreshToken, option)
+      .cookie("accessToken", accessToken, option)
       .json(new apiResponse(200, "User Login SuccessFully", selectedUser));
   } catch (error) {
     console.log(error);
@@ -84,24 +84,36 @@ export const login = async (req, res) => {
   }
 };
 
-export const logout = async(req,res)=>{
+export const logout = async (req, res) => {
   try {
-    res.clearCookie("accessToken")
-    res.clearCookie("refreshToken")
-    return res.status(200).json({message:`${req.user._id} Logout SuccessFully`})
+    await User.findByIdAndUpdate(req.user?._id, {
+      $unset: { refreshToken: "" },
+    });
+    res.clearCookie("accessToken");
+    res.clearCookie("refreshToken");
+    return res
+      .status(200)
+      .json({ message: `${req.user._id} Logout SuccessFully` });
   } catch (error) {
     res.status(500).json({ message: error.message }, "Logout catch error");
   }
-}
+};
 
-export const profile = async(req,res)=>{
-   try {
-    const user = await User.findById(req.user._id).select("-password -refreshToken")
-    if(!user){
-        throw new apiError(401,"Inavlid user")
+export const profile = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id).select(
+      "-password -refreshToken"
+    );
+    if (!user) {
+      throw new apiError(401, "Inavlid user");
     }
-    return res.status(200).json(new apiResponse(200,`Show user profile ${user._id}`,user))
-   } catch (error) {
-    return res.status(500).json({message:`${error.message} Error while fetching Profile `})
-   }
-}
+    console.log("User : ", user);
+    return res
+      .status(200)
+      .json(new apiResponse(200, `Show user profile ${user._id}`, user));
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: `${error.message} Error while fetching Profile ` });
+  }
+};

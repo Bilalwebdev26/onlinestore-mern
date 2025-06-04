@@ -48,7 +48,7 @@ const CartContent = ({ cart, user, guestId }) => {
                 Size :{" "}
                 <span className="text-black font-extrabold">
                   {" "}
-                  {product.size}
+                  {product.sizes}
                 </span>{" "}
                 | Color :
                 <span

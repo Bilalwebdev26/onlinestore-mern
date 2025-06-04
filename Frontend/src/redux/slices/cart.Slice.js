@@ -93,10 +93,10 @@ export const mergeCart = createAsyncThunk(
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/cart/merge`,
-        { data: { guestId, user } },
+        { guestId, user },
         { withCredentials: true }
       );
-      return response.data;
+      return response.data.data;
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message || "Failed to merge"

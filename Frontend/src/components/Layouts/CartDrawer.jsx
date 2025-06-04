@@ -11,6 +11,7 @@ const CartDrawer = ({ drawerOpen, toggleCartDrawer }) => {
   const { user, guestId } = useSelector((state) => state.auth);
   const { cart, loading, error } = useSelector((state) => state.cart);
   const userId = user ? user._id : null;
+  console.log("User in cartdrawer------------ : ",user)
   console.log("Cart  : ", cart);
   const handleCheckout = () => {
     toggleCartDrawer();
