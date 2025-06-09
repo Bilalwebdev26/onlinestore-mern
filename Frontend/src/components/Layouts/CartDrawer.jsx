@@ -39,7 +39,7 @@ const CartDrawer = ({ drawerOpen, toggleCartDrawer }) => {
   const handleRemoveFromCart = (productId, sizes, color) => {
     dispatch(deleteFromCart({ productId, userId, guestId, color, sizes }));
   };
-   console.log("Cart.products",cart.products)
+   console.log("Cart.products",cart?.products)
   return (
     <div
       className={`fixed top-0 right-0 h-full w-3/4 sm:w-1/2 lg:w-1/3 shadow-lg transform transition-transform duration-300 bg-white flex flex-col z-50 ${

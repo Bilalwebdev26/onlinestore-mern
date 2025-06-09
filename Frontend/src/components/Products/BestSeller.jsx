@@ -425,7 +425,7 @@ const BestSeller = ({ productId }) => {
       dispatch(fetchProductById({ id: productFetchById }));
       dispatch(fetchSimilarProducts({ id: productFetchById }));
     }
-  }, [dispatch]);
+  }, [dispatch,productFetchById]);
   // Update mainImage when selectedProducts is loaded
   useEffect(() => {
     if (selectedProducts?.images?.length > 0) {
@@ -445,12 +445,13 @@ const BestSeller = ({ productId }) => {
     setIsButtonDisabled(true);
     dispatch(
       addItemInCart({
-        user: user?._id,
-        guestId,
         productId: productFetchById,
-        sizes: selecetSize,
         quantity,
+        sizes: selecetSize,
         color: selectColor,
+        guestId,
+        user: user?._id,
+        images:mainImage,
       })
     )
       .then(() => {
@@ -510,11 +511,11 @@ const BestSeller = ({ productId }) => {
   //   );
   // };
   const renderMainImage = () => {
-    const image = selectedProducts?.images?.find(
+    const images = selectedProducts?.images?.find(
       (img) => img.url === mainImage
     );
 
-    if (!image) {
+    if (!images) {
       return (
         <div className="w-full h-[400px] flex items-center justify-center bg-gray-100">
           <p className="text-gray-500">Image not available</p>
@@ -524,8 +525,8 @@ const BestSeller = ({ productId }) => {
 
     return (
       <img
-        src={image.url}
-        alt={image.altText}
+        src={images.url}
+        alt={images.altText}
         className="w-full h-auto object-cover rounded-lg"
       />
     );

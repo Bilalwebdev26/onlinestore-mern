@@ -3,14 +3,15 @@ import axios from "axios";
 //create checkout
 export const createCheckout = createAsyncThunk(
   "checkout/createCheckout",
-  async (checkoutData, { rejectWithValue }) => {
+  async ({checkoutItems,shippingAddress,paymentMethod,totalPrice}, { rejectWithValue }) => {
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/checkout/create`,
-        checkoutData,
+        {checkoutItems,shippingAddress,paymentMethod,totalPrice},
         { withCredentials: true }
       );
-      return response.data;
+      console.log("Response from checkout create slice : ",response)
+      return response.data.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || "Error in Checkout");
     }

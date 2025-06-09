@@ -38,7 +38,7 @@ export const createCart = async (req, res) => {
         cart.products.push({
           productId,
           name: product.name,
-          image: product.images[0].url,
+          images: product.images[0].url,
           price: product.price,
           color,
           sizes,
@@ -66,7 +66,7 @@ export const createCart = async (req, res) => {
             sizes,
             color,
             quantity,
-            image: product.images[0].url,
+            images: product.images[0].url,
           },
         ],
         totalPrice: product.price * quantity,
@@ -115,6 +115,8 @@ export const updateQunatity = async (req, res) => {
 
 export const deleteProduct = async (req, res) => {
   const { productId, user, guestId, color, sizes } = req.body;
+  console.log("productID : ", productId);
+  console.log("user : ", user);
   try {
     let cart = await getCart(user, guestId);
     if (!cart) {
@@ -126,6 +128,7 @@ export const deleteProduct = async (req, res) => {
         p.sizes === sizes &&
         p.color === color
     );
+    console.log("Product Index : ", productIndex);
     if (productIndex > -1) {
       cart.products.splice(productIndex, 1);
       cart.totalPrice = cart.products.reduce((acc, item) => {
@@ -137,72 +140,84 @@ export const deleteProduct = async (req, res) => {
     await cart.save();
     return res
       .status(201)
-      .json(new apiResponse(201, "Product Deleted From Cart"));
+      .json(new apiResponse(201, "Product Deleted From Cart", cart));
+  } catch (error) {
+    console.log("Error from delete cart : ", error);
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+export const getAllCart = async (req, res) => {
+  const { user, guestId } = req.query;
+  try {
+    let cart = await getCart(user, guestId);
+    if (!cart) {
+      throw new apiError(404, "Cart Not Found");
+    }
+    return res.status(200).json(new apiResponse(200, "Show all cart ", cart));
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 };
 
-export const getAllCart = async(req,res)=>{
-  const{user,guestId}=req.query
+export const mergeCart = async (req, res) => {
+  const { guestId } = req.body;
   try {
-    let cart = await getCart(user,guestId)
-    if(!cart){
-      throw new apiError(404,"Cart Not Found")
-    }
-    return res.status(200).json(new apiResponse(200,"Show all cart ",cart))
-  } catch (error) {
-    return res.status(500).json({message:error.message})
-  }
-}
-
-export const mergeCart = async(req,res)=>{
-  const{guestId}=req.body
-  try {
-    const guestCart = await Cart.findOne({guestId})
-    const userCart = await Cart.findOne({user:req.user?._id})
-    if(guestCart){
-      if(guestCart.products.length===0){
-        throw new apiError(404,"Guest Cart is Empty")
+    const guestCart = await Cart.findOne({ guestId });
+    const userCart = await Cart.findOne({ user: req.user?._id });
+    if (guestCart) {
+      if (guestCart.products.length === 0) {
+        throw new apiError(404, "Guest Cart is Empty");
       }
-      if(userCart){
-        guestCart.products.forEach((guestItem)=>{
-          const productIndex = userCart.products.findIndex((item)=>item.productId.toString()===guestItem.productId.toString() && item.sizes === guestItem.sizes && item.color === guestItem.color)
-          if(productIndex>-1){
+      if (userCart) {
+        guestCart.products.forEach((guestItem) => {
+          const productIndex = userCart.products.findIndex(
+            (item) =>
+              item.productId.toString() === guestItem.productId.toString() &&
+              item.sizes === guestItem.sizes &&
+              item.color === guestItem.color
+          );
+          if (productIndex > -1) {
             //if the item exist in the user cart update the quantity
-                userCart.products[productIndex].quantity+=guestItem.quantity
-          }else{
-             //if not exist in user cart
-             userCart.products.push(guestItem)
+            userCart.products[productIndex].quantity += guestItem.quantity;
+          } else {
+            //if not exist in user cart
+            userCart.products.push(guestItem);
           }
-        })
-        userCart.totalPrice=userCart.products.reduce((acc,item)=>{
-          return acc+item.price*item.quantity
-        },0)
-        await userCart.save()
+        });
+        userCart.totalPrice = userCart.products.reduce((acc, item) => {
+          return acc + item.price * item.quantity;
+        }, 0);
+        await userCart.save();
         //remove the guest cart after merging
         try {
-          await Cart.findOneAndDelete({guestId})
+          await Cart.findOneAndDelete({ guestId });
         } catch (error) {
-          console.log("Error occur while delete guestUser : ",error)
+          console.log("Error occur while delete guestUser : ", error);
         }
-        return res.status(200).json(new apiResponse(200,"Merge Successfully",userCart))
-      }else{
+        return res
+          .status(200)
+          .json(new apiResponse(200, "Merge Successfully", userCart));
+      } else {
         //if usercart has no existing cart assign the guest cart to user
-        guestCart.user=req.user._id
-        guestCart.guestId=undefined
-        await guestCart.save()
-        return res.status(200).json(new apiResponse(200,"Cart Merge",guestCart))
+        guestCart.user = req.user._id;
+        guestCart.guestId = undefined;
+        await guestCart.save();
+        return res
+          .status(200)
+          .json(new apiResponse(200, "Cart Merge", guestCart));
       }
-    }else{
-      if(userCart){
+    } else {
+      if (userCart) {
         //guest cart has already merged
-        return res.status(200).json(new apiResponse(200,"Already merged",userCart))
-      }else{
-        return res.status(404,"Guest Cart Empty")
+        return res
+          .status(200)
+          .json(new apiResponse(200, "Already merged", userCart));
+      } else {
+        return res.status(404, "Guest Cart Empty");
       }
     }
   } catch (error) {
-    return res.status(500).json({message:error.message})
+    return res.status(500).json({ message: error.message });
   }
-}
+};

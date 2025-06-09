@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { deleteFromCart, updateQuan } from "../../redux/slices/cart.Slice";
 const CartContent = ({ cart, user, guestId }) => {
   const dispatch = useDispatch()
-  console.log("Cart : ", cart);
+  console.log("-------------------Cart------------- : ", cart);
 
   // Function to get the color style
   const getColorStyle = (color) => {
@@ -26,11 +26,14 @@ const CartContent = ({ cart, user, guestId }) => {
     }
   };
   const handleRemoveFromCart = (productId, sizes, color) => {
+    console.log("______________Product ID ____________: ",productId)
+    console.log("______________user ID ____________: ",user)
     dispatch(deleteFromCart({ productId, user, guestId, color, sizes }));
   };
   console.log("Cart.products", cart.products);
   return (
     <div>
+      {console.log("Product.images-------------",cart.products.images)}
       {cart.products.map((product) => (
         <div
           className="flex items-start justify-between py-4 border-b"
@@ -38,7 +41,7 @@ const CartContent = ({ cart, user, guestId }) => {
         >
           <div className="flex items-start">
             <img
-              src={product.image}
+              src={product.images}
               alt={product.name}
               className="h-24 object-cover w-20 mr-4 rounded"
             />

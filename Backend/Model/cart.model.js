@@ -15,7 +15,7 @@ const cartItemSchema = new mongoose.Schema(
       type: Number,
       default: 1,
     },
-    image: String,
+    images: String,
   },
   { _id: false }
 );

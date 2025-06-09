@@ -1,9 +1,15 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PayPalButton from "./PayPalButton";
+import { useDispatch, useSelector } from "react-redux";
+import { createCheckout } from "../../redux/slices/checkout.Slice";
+import axios from "axios";
 
 const Checkout = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { cart, loading, error } = useSelector((state) => state.cart);
+  const { user } = useSelector((state) => state.auth);
   const [shippingAddress, setshippingAddress] = useState({
     firstName: "",
     lastName: "",
@@ -13,47 +19,122 @@ const Checkout = () => {
     country: "",
     phone: "",
   });
+  //cart is loaded before checkout
+  useEffect(() => {
+    if (!cart || !cart.products || cart.products.length === 0) {
+      navigate("/");
+    }
+  }, [cart.products, navigate]);
   const [CheckoutId, setCheckoutId] = useState(null);
-  const cart = {
-    products: [
-      {
-        productId: 1,
-        name: "T-shirt",
-        size: "M",
-        color: "red",
-        quantity: 1,
-        price: 15,
-        image: "https://picsum.photos/200?random=1",
-      },
-      {
-        productId: 2,
-        name: "Pant",
-        size: "L",
-        color: "blue",
-        quantity: 1,
-        price: 25,
-        image: "https://picsum.photos/200?random=2",
-      },
-      {
-        productId: 3,
-        name: "Short",
-        size: "S",
-        color: "green",
-        quantity: 1,
-        price: 20,
-        image: "https://picsum.photos/200?random=3",
-      },
-    ],
-    totalPrice:220,
-  };
-  const handleCheckoutPayment = (e) => {
+  // const carts = {
+  //   products: [
+  //     {
+  //       productId: 1,
+  //       name: "T-shirt",
+  //       size: "M",
+  //       color: "red",
+  //       quantity: 1,
+  //       price: 15,
+  //       image: "https://picsum.photos/200?random=1",
+  //     },
+  //     {
+  //       productId: 2,
+  //       name: "Pant",
+  //       size: "L",
+  //       color: "blue",
+  //       quantity: 1,
+  //       price: 25,
+  //       image: "https://picsum.photos/200?random=2",
+  //     },
+  //     {
+  //       productId: 3,
+  //       name: "Short",
+  //       size: "S",
+  //       color: "green",
+  //       quantity: 1,
+  //       price: 20,
+  //       image: "https://picsum.photos/200?random=3",
+  //     },
+  //   ],
+  //   totalPrice:220,
+  // };
+  if (loading) {
+    return <p className="text-xl text-center">Loading...</p>;
+  }
+  // const handleCheckoutPayment = async (e) => {
+  //   e.preventDefault();
+  //   if (cart && cart.products.length > 0) {
+  //     const res = await dispatch(
+  //       createCheckout({
+  //         checkoutItems: cart.products,
+  //         shippingAddress,
+  //         paymentMethod: "Paypal",
+  //         totalPrice: cart.totalPrice,
+  //       })
+  //     );
+  //      if (res.payload && res.payload._id) {
+  //     setCheckoutId(res.payload._id);
+  //   }
+  //   }
+  // };
+  const handleCheckoutPayment = async (e) => {
     e.preventDefault();
-    setCheckoutId(123);
+    if (cart && cart.products.length > 0) {
+      try {
+        const res = await dispatch(
+          createCheckout({
+            checkoutItems: cart.products,
+            shippingAddress,
+            paymentMethod: "Paypal",
+            totalPrice: cart.totalPrice,
+          })
+        );
+        if (res.payload && res.payload._id) {
+          setCheckoutId(res.payload._id);
+        }
+      } catch (error) {
+        console.error("Checkout error:", error);
+      }
+    }
   };
-  const handlePaymentSuccess = (details) => {
-    console.log("Payment SuccessFull : ", details);
-    navigate("/order-configration");
+  const handlePaymentSuccess = async (details) => {
+    try {
+      const response = await axios.put(
+        `${import.meta.env.VITE_BACKEND_URL}/checkout/pay/${CheckoutId}`,
+        {
+          paymentDetail: details,
+          paymentStatus: "Paid",
+        },
+        { withCredentials: true }
+      );
+
+      await handleFinalizeCheckout(CheckoutId);
+    } catch (error) {
+      console.log(error);
+    }
   };
+  const handleFinalizeCheckout = async (id) => {
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/checkout/finalize/${id}`,{},
+        {
+          withCredentials: true,
+        }
+      );
+      navigate("/order-configration");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  if (loading) {
+    return <p className="text-xl font-mono text-center">Loading Cart...</p>;
+  }
+  if (error) {
+    return <p className="text-xl font-mono text-center">Error : {error}</p>;
+  }
+  if (!cart || !cart.products || cart.products.length === 0) {
+    return <p>Your Cart is empty</p>;
+  }
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-7xl mx-auto py-10 px-6 tracking-tighter">
       {/* Left Section */}
@@ -67,7 +148,7 @@ const Checkout = () => {
             </label>
             <input
               type="email"
-              value={"user@gmail.com"}
+              value={user ? user.email : ""}
               className="w-full p-2 border rounded "
               disabled
             />
@@ -205,7 +286,7 @@ const Checkout = () => {
                 <h3 className="text-lg mb-4">Pay with Paypal</h3>
                 {/* Paypal button comp*/}
                 <PayPalButton
-                  amount={100}
+                  amount={cart?.totalPrice}
                   onSuccess={handlePaymentSuccess}
                   onError={(err) => alert("Payment failed.Try again")}
                 />
@@ -225,14 +306,15 @@ const Checkout = () => {
             >
               <div className="flex items-start">
                 <img
-                  src={product.image}
+                  src={product?.images}
                   alt={product.name}
                   className="w-20 h-24 object-cover mr-4"
                 />
                 <div className="">
                   <h3 className="text-md">{product.name}</h3>
-                  <p className="text-gray-500">Size : {product.size}</p>
+                  <p className="text-gray-500">Size : {product.sizes}</p>
                   <p className="text-gray-500">Color : {product.color}</p>
+                  <p className="text-gray-500">Quantity : {product.quantity}</p>
                 </div>
               </div>
               <p className="text-xl">${product.price?.toLocaleString()}</p>

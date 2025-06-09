@@ -1,45 +1,57 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { IoArrowBack } from "react-icons/io5";
+import { useDispatch, useSelector } from "react-redux";
+import { orderById } from "../redux/slices/order.Slice";
 
 const OrderDetail = () => {
   const { id } = useParams();
-  const [orderDetail, setOrderDetail] = useState(null);
-  useEffect(() => {
-    const mockOrder = {
-      _id: id,
-      createdAt: new Date(),
-      isPaid: true,
-      isDelivered: false,
-      paymentMethod: "Paypal",
-      shippingMethod: "standard",
-      shippingAddress: {
-        city: "New York",
-        country: "USA",
-      },
-      orderItem: [
-        {
-          productId: 1,
-          name: "T-shirt Polo black kncok",
-          size: "M",
-          color: "red",
-          quantity: 1,
-          price: 15,
-          image: "https://picsum.photos/200?random=1",
-        },
-        {
-          productId: 2,
-          name: "T-shirt",
-          size: "M",
-          color: "red",
-          quantity: 3,
-          price: 45,
-          image: "https://picsum.photos/200?random=2",
-        },
-      ],
-    };
-    setOrderDetail(mockOrder);
-  }, [id]);
+  const dispatch = useDispatch()
+  const{orderDetail,loading,error}=useSelector((state)=>state.order)
+  useEffect(()=>{
+    dispatch(orderById(id))
+  },[dispatch,id])
+  // useEffect(() => {
+  //   const mockOrder = {
+  //     _id: id,
+  //     createdAt: new Date(),
+  //     isPaid: true,
+  //     isDelivered: false,
+  //     paymentMethod: "Paypal",
+  //     shippingMethod: "standard",
+  //     shippingAddress: {
+  //       city: "New York",
+  //       country: "USA",
+  //     },
+  //     orderItem: [
+  //       {
+  //         productId: 1,
+  //         name: "T-shirt Polo black kncok",
+  //         size: "M",
+  //         color: "red",
+  //         quantity: 1,
+  //         price: 15,
+  //         image: "https://picsum.photos/200?random=1",
+  //       },
+  //       {
+  //         productId: 2,
+  //         name: "T-shirt",
+  //         size: "M",
+  //         color: "red",
+  //         quantity: 3,
+  //         price: 45,
+  //         image: "https://picsum.photos/200?random=2",
+  //       },
+  //     ],
+  //   };
+  //   setOrderDetail(mockOrder);
+  // }, [id]);
+  if(loading){
+    return <p className="text-3xl font-bold ">Loading...</p>
+  }
+  if(error){
+    return <p className="text-3xl font-bold ">Error:{error}</p>
+  }
   return (
     <div className="mx-auto max-w-7xl p-4 sm:p-6">
       <h2 className="font-bold text-3xl">Order Details</h2>
@@ -115,7 +127,7 @@ const OrderDetail = () => {
                   <tr className="border-b hover:border-gray-700" key={index}>
                     <td className="p-2 sm:p-4 flex items-center font-mono gap-2 flex-col md:flex-row text-start">
                       <img
-                        src={item.image}
+                        src={item.images}
                         alt={item.name}
                         className="w-10 h-10 rounded-md object-cover"
                       />

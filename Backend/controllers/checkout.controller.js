@@ -3,13 +3,15 @@ import { apiError } from "../utils/apiError.class.js";
 import { apiResponse } from "../utils/apiRes.class.js";
 import { Order } from "../Model/Order.model.js";
 import { Cart } from "../Model/cart.model.js";
+import { deleteOrder } from "./adminOrder.controller.js";
 
 export const createCheckout = async (req, res) => {
   const {checkoutItems, shippingAddress, paymentMethod, totalPrice } =
     req.body;
-  if (!checkoutItems || checkoutItems.length === 0) {
-    throw new apiError(400,"No items in checkout")
-  }
+    console.log(checkoutItems)
+  // if (!checkoutItems || checkoutItems.length === 0) {
+  //   throw new apiError(400,"No items in checkout")
+  // }
   try {
     const newCheckout = await CheckOut.create({
         user:req.user._id,
@@ -21,8 +23,10 @@ export const createCheckout = async (req, res) => {
         isPaid:false
     })
     //await newCheckout.save()
+    console.log("Create checkout : ",newCheckout)
     return res.status(201).json(new apiResponse(201,"Checkout Detail",newCheckout))
   } catch (error) {
+    console.log("Error : ",error)
     return res.status(500).json({message:error.message})
   }
 };
@@ -75,6 +79,7 @@ export const finalize = async(req,res)=>{
            await checkout.save();
            //delete the cart associated with user
            await Cart.findOneAndDelete({user:req.user._id})//user:checkout.user
+           console.log("Orders : ",order)
            return res.status(201).json(new apiResponse(201,"Order Created SuccessFully",order))
         }else if(checkout.isFinalized){
               throw new apiError(400,"Checkout already finalized")

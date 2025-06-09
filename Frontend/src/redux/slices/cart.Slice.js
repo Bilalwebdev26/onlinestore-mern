@@ -2,10 +2,21 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
 //helper function to load cart from localStorage
-const localCart = () => {
-  const storeCart = localStorage.getItem("cart");
-  return storeCart ? JSON.parse(storeCart) : { products: [] };
+// const localCart = () => {
+//   const storeCart = localStorage.getItem("cart");
+//   return storeCart ? JSON.parse(storeCart) : { products: [] };
+// };
+ const localCart = () => {
+  try {
+    const storeCart = localStorage.getItem("cart");
+    if (!storeCart || storeCart === "undefined") return { products: [] };
+    return JSON.parse(storeCart);
+  } catch (err) {
+    console.warn("Invalid cart data in localStorage:", err);
+    return { products: [] };
+  }
 };
+
 //helper function to save cart to localstorage
 const saveCartToLocal = (cart) => {
   localStorage.setItem("cart", JSON.stringify(cart));
@@ -31,13 +42,13 @@ export const fecthCart = createAsyncThunk(
 export const addItemInCart = createAsyncThunk(
   "cart/AddToCart",
   async (
-    { user, guestId, productId, sizes, quantity, color },
+    { productId,quantity, sizes, color, guestId,user,images },
     { rejectWithValue }
   ) => {
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/cart`,
-         { quantity, productId, user, sizes, color, guestId } 
+         {  productId,quantity, sizes, color, guestId,user,images } 
       );
       console.log("Cart : ",response.data.data)
       return response.data.data;
@@ -63,6 +74,7 @@ export const updateQuan = createAsyncThunk(
       console.log("Cart response:", response.data.data);
       return response.data.data;
     } catch (error) {
+      console.log("Error : ",error)
       return rejectWithValue(
         error.response?.data?.message || "Failed to update Quantity"
       );
@@ -76,9 +88,9 @@ export const deleteFromCart = createAsyncThunk(
     try {
       const response = await axios.delete(
         `${import.meta.env.VITE_BACKEND_URL}/cart/delete`,
-        { data: { productId, user, guestId, color, sizes } }
+         {data:{ productId, user, guestId, color, sizes }}
       );
-      return response.data;
+      return response.data.data;
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message || "Failed to delete product from cart"

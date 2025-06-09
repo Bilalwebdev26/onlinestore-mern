@@ -12,7 +12,7 @@ export const userOrder = createAsyncThunk(
           withCredentials: true,
         }
       );
-      return response.data;
+      return response.data.data;
     } catch (error) {
       return rejectWithValue(error.response.data || "Error in Fetch Order");
     }
@@ -24,12 +24,12 @@ export const orderById = createAsyncThunk(
   async (orderId, { rejectWithValue }) => {
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_BACKEND_URL}/order//singleOrder/${orderId}`,
+        `${import.meta.env.VITE_BACKEND_URL}/order/singleOrder/${orderId}`,
         {
           withCredentials: true,
         }
       );
-      return response.data
+      return response.data.data
     } catch (error) {
         return rejectWithValue(error.response.data||"Error in find order")
     }
