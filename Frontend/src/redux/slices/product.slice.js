@@ -43,10 +43,10 @@ export const fetchProduct = createAsyncThunk(
 export const fetchProductById = createAsyncThunk(
   "product/fetchById",
   async ({ id }) => {
+    console.log("Response : ", `${import.meta.env.VITE_BACKEND_URL}/products/${id}`);
     const response = await axios.get(
       `${import.meta.env.VITE_BACKEND_URL}/products/${id}`
     );
-    console.log("Response : ", response);
     return response.data.data;
   }
 );
@@ -54,6 +54,7 @@ export const fetchProductById = createAsyncThunk(
 export const updateProduct = createAsyncThunk(
   "product/updateProduct",
   async ({ id, productData }) => {
+    console.log(`${import.meta.env.VITE_BACKEND_URL}/products/${id}/edit`)
     const response = await axios.put(
       `${import.meta.env.VITE_BACKEND_URL}/products/${id}/edit`,
       productData,

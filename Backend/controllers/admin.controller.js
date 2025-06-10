@@ -31,6 +31,7 @@ export const createUserAdmin = async (req, res) => {
       password,
       role,
     });
+    console.log("new User : ",user)
     await user.save();
     return res
       .status(201)

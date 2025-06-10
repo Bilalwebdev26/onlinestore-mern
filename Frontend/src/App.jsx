@@ -18,8 +18,7 @@ import UserManagement from "./components/Admin/UserManagement.jsx";
 import ProductManagment from "./components/Admin/ProductManagment.jsx";
 import EditProductPage from "./components/Admin/EditProductPage.jsx";
 import OrderManagment from "./components/Admin/OrderManagment.jsx";
-
-
+import ProtectedRoute from "./components/Common/ProtectedRoute.jsx";
 
 const App = () => {
   return (
@@ -33,19 +32,29 @@ const App = () => {
           <Route path="/profile" element={<Profile />} />
           <Route path="/collection/:collection" element={<CollectionPage />} />
           <Route path="/product/:id" element={<BestSeller />} />
-          <Route path="/checkout" element={<Checkout/>}/>
-          <Route path="/order-configration" element={<OrderConfigration/>}/>
-          <Route path="/order/:id" element={<OrderDetail/>}/>
-          <Route path="/my-orders" element={<MyOrderPage/>}/>
+          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/order-configration" element={<OrderConfigration />} />
+          <Route path="/order/:id" element={<OrderDetail />} />
+          <Route path="/my-orders" element={<MyOrderPage />} />
         </Route>
         {/* User Layout */}
-        <Route path="/admin"  element={<AdminLayout/>}>
-        {/* Admin Layout */}
-         <Route index element={<AdminHomePage/>}/>
-         <Route path="/admin/users" element={<UserManagement/>}/>
-         <Route path="/admin/products" element={<ProductManagment/>}/>
-         <Route path="/admin/products/:id/edit" element={<EditProductPage/>}/>
-         <Route path="/admin/orders" element={<OrderManagment/>}/>
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute role="admin">
+              <AdminLayout />
+            </ProtectedRoute>
+          }
+        >
+          {/* Admin Layout */}
+          <Route index element={<AdminHomePage />} />
+          <Route path="/admin/users" element={<UserManagement />} />
+          <Route path="/admin/products" element={<ProductManagment />} />
+          <Route
+            path="/admin/products/:id/edit"
+            element={<EditProductPage />}
+          />
+          <Route path="/admin/orders" element={<OrderManagment />} />
         </Route>
       </Routes>
     </div>

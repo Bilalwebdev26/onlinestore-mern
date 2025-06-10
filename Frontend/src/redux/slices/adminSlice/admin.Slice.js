@@ -5,13 +5,13 @@ export const fetchUsers = createAsyncThunk(
   "user/AdminUsers",
   async (_, { rejectWithValue }) => {
     try {
-      const response = axios.get(
+      const response =await axios.get(
         `${import.meta.env.VITE_BACKEND_URL}/adminuser/users`,
         {
           withCredentials: true,
         }
       );
-      return response.data;
+      return response.data.data;
     } catch (error) {
       return rejectWithValue(error.response.data || "Error to fetch all users");
     }
@@ -29,7 +29,7 @@ export const createUser = createAsyncThunk(
           withCredentials: true,
         }
       );
-      return response.data;
+      return response.data.data;
     } catch (error) {
       return rejectWithValue(error.response.data || "Failed to create user");
     }
@@ -38,18 +38,16 @@ export const createUser = createAsyncThunk(
 //updated user
 export const updatedUserRole = createAsyncThunk(
   "user/updatedUser",
-  async (id, name, email, role, { rejectWithValue }) => {
+  async ({id, name, email, role}, { rejectWithValue }) => {
     try {
       const response = await axios.put(
         `${import.meta.env.VITE_BACKEND_URL}/adminuser/updateUser/${id}`,
-        {
-          data: { name, email, role },
-        },
+          { name, email, role },
         {
           withCredentials: true,
         }
       );
-      return response.data;
+      return response.data.data;
     } catch (error) {
       return rejectWithValue(error.response.data || "Updated User Error");
     }
@@ -131,7 +129,7 @@ const adminUserSlice = createSlice({
       })
       .addCase(createUser.fulfilled,(state,action)=>{
         state.loading=false
-        state.users.push(action.payload.user)
+        state.users.push(action.payload)
       })
       .addCase(createUser.rejected,(state,action)=>{
         state.loading=false

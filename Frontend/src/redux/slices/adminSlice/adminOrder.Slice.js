@@ -5,13 +5,13 @@ export const fetchOrders = createAsyncThunk(
   "order/fetchOrder",
   async (_, { rejectWithValue }) => {
     try {
-      const response = axios.get(
+      const response = await axios.get(
         `${import.meta.env.VITE_BACKEND_URL}/adminorder/all`,
         {
           withCredentials: true,
         }
       );
-      return response.data;
+      return response.data.data;
     } catch (error) {
       return rejectWithValue(
         error.response.data || "Error to fetch all products"
@@ -21,16 +21,16 @@ export const fetchOrders = createAsyncThunk(
 );
 export const updateStatus = createAsyncThunk(
   "order/updateOrder",
-  async (id, status, { rejectWithValue }) => {
+  async ({ id, status }, { rejectWithValue }) => {
     try {
       const response = await axios.put(
         `${import.meta.env.VITE_BACKEND_URL}/adminorder/status/${id}`,
-        status,
+        {status},
         {
           withCredentials: true,
         }
       );
-      return response.data;
+      return response.data.data;
     } catch (error) {
       return rejectWithValue(error.response.data || "Error to update status");
     }
@@ -42,11 +42,12 @@ export const deliverOrder = createAsyncThunk(
     try {
       const response = await axios.put(
         `${import.meta.env.VITE_BACKEND_URL}/adminorder/delivered/${id}`,
+        {},
         {
           withCredentials: true,
         }
       );
-      return response.data;
+      return response.data, data;
     } catch (error) {
       return rejectWithValue(
         error.response.data || "Error to update Delivered status"
@@ -91,13 +92,13 @@ export const adminOrderSlice = createSlice({
         state.orders = action.payload;
         state.totalOrders = action.payload.length;
         const calculateTotalRevenue = action.payload.reduce((acc, order) => {
-          return acc + order.totalSales;
+          return acc + parseFloat(order.totalPrice || 0);
         }, 0);
         state.totalSales = calculateTotalRevenue;
       })
       .addCase(fetchOrders.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload.message;
+        state.error = action.error.message || "Error in fetch order";
       })
       //update Order Status
       .addCase(updateStatus.pending, (state, action) => {
@@ -152,4 +153,4 @@ export const adminOrderSlice = createSlice({
       });
   },
 });
-export default adminOrderSlice.reducer
+export default adminOrderSlice.reducer;

@@ -2,10 +2,15 @@ import React from 'react'
 import { FaBoxOpen, FaClipboardList, FaStore, FaUser } from 'react-icons/fa6'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { FaSignOutAlt } from "react-icons/fa";
+import { useDispatch } from 'react-redux';
+import { logoutUser } from '../../redux/slices/auth.slice';
 
 const AdminSideBar = () => {
     const navigate = useNavigate()
+    const dispatch = useDispatch()
     const handleLogout = ()=>{
+        dispatch(logoutUser())
+        //clearcart here
         navigate("/")
     }
   return (

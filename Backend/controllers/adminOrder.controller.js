@@ -4,7 +4,8 @@ import { apiResponse } from "../utils/apiRes.class.js";
 
 export const getAllOrders = async (req, res) => {
   try {
-    const orders = await Order.find({});
+    const orders = await Order.find({}).populate("user","name email")
+    console.log("Orders : ",orders)
     if (!orders) {
       throw new apiError(400, "No order found");
     }
@@ -16,9 +17,9 @@ export const getAllOrders = async (req, res) => {
   }
 };
 export const updateOrderStatus = async (req, res) => {
-  const { status } = req.body;
+  const {status } = req.body;
   try {
-    const order = await Order.findById(req.params.id);
+    const order = await Order.findById(req.params.id).populate("user","name email");
     if (!order) {
       throw new apiError(400, "Order Not Found");
     }

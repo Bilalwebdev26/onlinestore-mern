@@ -5,13 +5,13 @@ import axios from "axios";
 export const fetchProducts = createAsyncThunk(
   "admin/fetchProducts",
   async () => {
-    const response = axios.get(
+    const response =await axios.get(
       `${import.meta.env.VITE_BACKEND_URL}/adminproduct/all`,
       {
         withCredentials: true,
       }
     );
-    return response.data;
+    return response.data.data;
   }
 );
 //create Product
@@ -37,7 +37,8 @@ export const createProduct = createAsyncThunk(
 //update existing product
 export const updateProduct = createAsyncThunk(
   "admin/updateProduct",
-  async (id, productData) => {
+  async ({id, productData}) => {
+    console.log(`${import.meta.env.VITE_BACKEND_URL}/products/${id}/edit`)
     const response = axios.put(
       `${import.meta.env.VITE_BACKEND_URL}/products/${id}/edit`,
       productData,
@@ -45,13 +46,13 @@ export const updateProduct = createAsyncThunk(
         withCredentials: true,
       }
     );
-    return response.data;
+    return response.data.data;
   }
 );
 export const deleteProduct = createAsyncThunk(
   "admin/deleteProduct",
   async (id) => {
-    axios.delete(`${import.meta.env.VITE_BACKEND_URL}/products/delete/${id}`, {
+    await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/products/delete/${id}`, {
       withCredentials: true,
     });
     return id;
@@ -73,11 +74,12 @@ export const adminProductSlice = createSlice({
     })
     .addCase(fetchProducts.fulfilled,(state,action)=>{
         state.loading=false
+        console.log("Admin products fetch----- : ",action.payload)
         state.products=action.payload
     })
     .addCase(fetchProducts.rejected,(state,action)=>{
         state.loading=false
-        state.error=action.payload.message
+        state.error=action.error.message
     })
     //createProduct
     .addCase(createProduct.pending,(state)=>{
@@ -107,7 +109,7 @@ export const adminProductSlice = createSlice({
     })
     .addCase(updateProduct.rejected,(state,action)=>{
         state.loading=false
-        state.error=action.payload.message
+        state.error=action.payload
     })
     //deleteProduct
     .addCase(deleteProduct.pending,(state,action)=>{
@@ -116,7 +118,7 @@ export const adminProductSlice = createSlice({
     })
     .addCase(deleteProduct.fulfilled,(state,action)=>{
         state.loading=false
-        state.products.filter((product)=>product._id !== action.payload)
+        state.products=state.products.filter((product)=>product._id !== action.payload)
     })
     .addCase(deleteProduct.rejected,(state,action)=>{
         state.loading=false

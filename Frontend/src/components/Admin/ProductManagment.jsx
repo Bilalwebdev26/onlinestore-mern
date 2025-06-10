@@ -1,18 +1,33 @@
-import React from "react";
 import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+import {
+  deleteProduct,
+  fetchProducts,
+} from "../../redux/slices/adminSlice/adminProduct.Slice";
 const ProductManagment = () => {
-  const products = [
-    {
-      _id: 123123,
-      name: "Shirt",
-      price: 120,
-      sku: "123123123",
-    },
-  ];
-  const deleteProduct=(id)=>{
-   if( window.confirm("Are you sure to delete Product")){
-    console.log(`Product deleted Succuessfully : ${id}`)
-   }
+  const dispatch = useDispatch();
+  const { products, loading, error } = useSelector(
+    (state) => state.adminProduct
+  );
+  useEffect(() => {
+    dispatch(fetchProducts());
+  }, [dispatch]);
+  const deleteProductbyID = (id) => {
+    const confirmed = window.confirm(
+      "⚠️ Are you sure you want to delete this product? This action cannot be undone."
+    );
+
+    if (confirmed) {
+      console.log(`✅ Product deleted successfully: ${id}`);
+      dispatch(deleteProduct(id));
+    } else {
+      console.warn(`❌ Delete action cancelled for product ID: ${id}`);
+      alert("Product deletion cancelled. The product was not removed.");
+    }
+  };
+  if(loading){
+    return <p className="text-2xl font-black">Loading</p>
   }
   return (
     <div className="max-w-7xl mx-auto p-0 md:p-6">
@@ -40,14 +55,26 @@ const ProductManagment = () => {
                   <td className="p-4">${product.price}</td>
                   <td className="p-4">{product.sku}</td>
                   <td className="p-4 flex ">
-                    <Link to={`/admin/products/${product._id}/edit`} className="bg-yellow-500 text-white px-2 py-1 rounded mr-2 hover:bg-yellow-600 duration-200">Edit</Link>
-                    <button className="bg-red-500 text-white px-2 py-1 duration-200 rounded cursor-pointer hover:bg-red-600" onClick={()=>deleteProduct(product._id)}>Delete</button>
+                    <Link
+                      to={`/admin/products/${product._id}/edit`}
+                      className="bg-yellow-500 text-white px-2 py-1 rounded mr-2 hover:bg-yellow-600 duration-200"
+                    >
+                      Edit
+                    </Link>
+                    <button
+                      className="bg-red-500 text-white px-2 py-1 duration-200 rounded cursor-pointer hover:bg-red-600"
+                      onClick={() => deleteProductbyID(product._id)}
+                    >
+                      Delete
+                    </button>
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan={4} className="p-4 text-center text-gray-800">No Products Found</td>
+                <td colSpan={4} className="p-4 text-center text-gray-800">
+                  No Products Found
+                </td>
               </tr>
             )}
           </tbody>

@@ -1,128 +1,50 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { fetchOrders } from "../redux/slices/adminSlice/adminOrder.Slice";
+import { fetchProducts } from "../redux/slices/adminSlice/adminProduct.Slice";
 
 const AdminHomePage = () => {
-  const orders = [
-    {
-        _id:1,
-        user:{
-            name:"John Doe",
-        },
-        totalPrice:110,
-        status:"Processing"
-    },
-    {
-        _id:2,
-        user:{
-            name:"John Doe",
-        },
-        totalPrice:110,
-        status:"Processing"
-    },
-    {
-        _id:3,
-        user:{
-            name:"John Doe",
-        },
-        totalPrice:110,
-        status:"Processing"
-    },
-    {
-        _id:4,
-        user:{
-            name:"John Doe",
-        },
-        totalPrice:110,
-        status:"Processing"
-    },
-    {
-        _id:5,
-        user:{
-            name:"John Doe",
-        },
-        totalPrice:110,
-        status:"Processing"
-    },
-    {
-        _id:6,
-        user:{
-            name:"John Doe",
-        },
-        totalPrice:110,
-        status:"Processing"
-    },
-    {
-        _id:7,
-        user:{
-            name:"John Doe",
-        },
-        totalPrice:110,
-        status:"Processing"
-    },
-    {
-        _id:8,
-        user:{
-            name:"John Doe",
-        },
-        totalPrice:110,
-        status:"Processing"
-    },
-    {
-        _id:9,
-        user:{
-            name:"John Doe",
-        },
-        totalPrice:110,
-        status:"Processing"
-    },
-    {
-        _id:10,
-        user:{
-            name:"John Doe",
-        },
-        totalPrice:110,
-        status:"Processing"
-    },
-    {
-        _id:11,
-        user:{
-            name:"John Doe",
-        },
-        totalPrice:110,
-        status:"Processing"
-    },
-    {
-        _id:12,
-        user:{
-            name:"John Doe",
-        },
-        totalPrice:110,
-        status:"Processing"
-    }
-  ];
+  const{orders,totalOrders,totalSales,loading:orderLoading,error:orderError}=useSelector((state)=>state.adminOrder)
+  const{products,loading:productLoading,error:productError}=useSelector((state)=>state.adminProduct)
+  const dispatch = useDispatch()
+  useEffect(()=>{
+    dispatch(fetchOrders())
+    dispatch(fetchProducts())
+  },[dispatch])
+  console.log("Admin User : ",orders)
   return (
     <div className="max-w-7xl mx-auto p-0 md:p-6">
       <h1 className="text-3xl font-bold mb-6">Admin Dashboard</h1>
+      {productLoading || orderLoading ?(
+        <p>Loading</p>
+      ):productError?(
+        <p className="text-red-600 text-xl font-bold">Error Fetching products : {productError}</p>
+      ):orderError?(
+         <p className="text-red-600 text-xl font-bold">Error Fetching orders : {orderError}</p>
+      ):(
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <div className="shadow-md p-4 rounded-lg">
           <h2 className="text-xl font-semibold">Revenue</h2>
-          <p className="text-2xl">$10000</p>
+          <p className="text-2xl">${parseFloat(totalSales).toFixed(2)}</p>
         </div>
         <div className="shadow-md p-4 rounded-lg">
           <h2 className="text-xl font-semibold">Total Orders</h2>
-          <p className="text-2xl">200</p>
+          <p className="text-2xl">{totalOrders}</p>
           <Link to="/admin/orders" className="text-blue-500 hover:underline">
             Manage Orders
           </Link>
         </div>
         <div className="shadow-md p-4 rounded-lg">
           <h2 className="text-xl font-semibold">Total Products</h2>
-          <p className="text-2xl">100</p>
+          {console.log("Productsssssssssssss: ",products)}
+          <p className="text-2xl">{products.length}</p>
           <Link to="/admin/products" className="text-blue-500 hover:underline">
             Manage Products
           </Link>
         </div>
       </div>
+       )}
       <div className="mt-6">
         <h2 className="text-2xl font-bold mb-4">Recent Orders</h2>
         <div className="overflow-x-auto">
@@ -140,8 +62,8 @@ const AdminHomePage = () => {
                 orders.map((order) => (
                   <tr key={order._id} className="border-b hover:bg-gray-50 cursor-pointer">
                     <td className="p-4">{order._id}</td>
-                    <td className="p-4">{order.user.name}</td>
-                    <td className="p-4">{order.totalPrice}</td>
+                    <td className="p-4">{order.user?.name}</td>
+                    <td className="p-4">{parseFloat(order.totalPrice).toFixed(2)}</td>
                     <td className="p-4">{order.status}</td>
                   </tr>
                 ))

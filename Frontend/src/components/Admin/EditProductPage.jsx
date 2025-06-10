@@ -1,6 +1,15 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { updateProduct } from "../../redux/slices/adminSlice/adminProduct.Slice";
+import { useNavigate, useParams } from "react-router-dom";
+import { fetchProductById } from "../../redux/slices/product.slice";
+import axios from "axios";
 
 const EditProductPage = () => {
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const{id}=useParams()
+  const{selectedProducts,loading,error}=useSelector((state)=>state.product)
   const [productData, setProductData] = useState({
     name: "",
     description: "",
@@ -14,20 +23,38 @@ const EditProductPage = () => {
     collection: "",
     material: "",
     gender: "",
-    images: [
-      {
-        url: "https://picsum.photos/500/500/?random=1",
-        altText:"img1"
-      },
-      {
-        url: "https://picsum.photos/500/500/?random=2",
-         altText:"img2"
-      },
-    ],
+    images: [],
   });
+  const[uploading,setUploading]=useState(false)
+  useEffect(()=>{
+    if(id){
+      dispatch(fetchProductById({id}))
+    }
+  },[dispatch,id])
+  useEffect(()=>{
+    if(selectedProducts){
+      setProductData(selectedProducts)
+    }
+  },[selectedProducts])
   const handleImageUpload = async(e)=>{
      const file=e.target.files[0]
      console.log(file)
+     const formData = new FormData()
+     formData.append("image",file)
+     try {
+      setUploading(true)
+      const{data} = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/upload`,formData,{
+        withCredentials:true
+      })
+      console.log("Data----------- : ",data)
+      setProductData((prevData)=>({
+        ...prevData,images:[...prevData.images,{url:data.imageUrl,altText:"name"}]
+      }))
+      setUploading(false)
+     } catch (error) {
+      console.log(error)
+      setUploading(false)
+     }
   }
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -36,6 +63,14 @@ const EditProductPage = () => {
   const handleSubmit = (e)=>{
         e.preventDefault()
         console.log(productData)
+        dispatch(updateProduct({id,productData}))
+        navigate("/admin/products")
+  }
+  if(loading){
+    return <p>Laoding</p>
+  }
+  if(error){
+    return <p>Error:{error}</p>
   }
   return (
     <div className="max-w-5xl mx-auto p-0 md:p-6 shadow rounded">
