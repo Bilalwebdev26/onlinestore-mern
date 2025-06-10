@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "name": "Backend",
+  "name": "Frontend",
   "builds": [
     {
       "src": "package.json",
@@ -13,5 +13,7 @@
       "source": "/(.*)",
       "destination": "/"
     }
-  ]
+  ],
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist"
 }
