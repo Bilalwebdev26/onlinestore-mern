@@ -24,6 +24,10 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
+app.get("/",(req,res)=>{
+  return res.send("Rabbit Project")
+})
+
 //User Routes
 app.use("/api/users", userRoutes);
 //Product Routes
@@ -44,8 +48,5 @@ app.use("/api/adminuser", adminRoutes);
 app.use("/api/adminproduct", adminProduct);
 //Admin Order
 app.use("/api/adminorder", adminOrder);
-app.get("/",(req,res)=>{
-  return res.send("Rabbit Project")
-})
 
 export { app };
