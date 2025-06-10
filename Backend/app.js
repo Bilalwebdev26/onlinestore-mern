@@ -45,7 +45,7 @@ app.use("/api/adminproduct", adminProduct);
 //Admin Order
 app.use("/api/adminorder", adminOrder);
 app.get("/",(req,res)=>{
-  res.send("Rabbit Project")
+  return res.send("Rabbit Project")
 })
 
 export { app };
