@@ -1,4 +1,4 @@
-import { Order } from "../Model/Order.model.js";
+import { Order } from "../Model/order.model.js";
 import { apiError } from "../utils/apiError.class.js";
 import { apiResponse } from "../utils/apiRes.class.js";
 

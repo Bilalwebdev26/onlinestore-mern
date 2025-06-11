@@ -1,7 +1,7 @@
 import { CheckOut } from "../Model/checkout.model.js";
 import { apiError } from "../utils/apiError.class.js";
 import { apiResponse } from "../utils/apiRes.class.js";
-import { Order } from "../Model/Order.model.js";
+import { Order } from "../Model/order.model.js";
 import { Cart } from "../Model/cart.model.js";
 import { deleteOrder } from "./adminOrder.controller.js";
 
