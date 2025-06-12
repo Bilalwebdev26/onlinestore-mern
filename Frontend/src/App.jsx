@@ -25,6 +25,7 @@ const App = () => {
   return (
     <div>
       <Toaster position="top-right" />
+      
       <ScrollToTop/>
       <Routes>
         <Route path="/" element={<UserLayout />}>
