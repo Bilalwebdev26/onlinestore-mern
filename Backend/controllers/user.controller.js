@@ -35,6 +35,7 @@ export const register = async (req, res) => {
     const option = {
       httpOnly: true,
       secure: true,
+      sameSite: "None", // REQUIRED for cross-origin cookies
     };
     const selectedUser = await User.findById(user._id).select(
       "-password -refreshtoken"
@@ -68,6 +69,7 @@ export const login = async (req, res) => {
     const option = {
       httpOnly: true,
       secure: true,
+      sameSite: "None", // REQUIRED for cross-origin cookies
     };
     const selectedUser = await User.findById(user._id).select(
       "-password -refreshtoken"
