@@ -19,11 +19,13 @@ import ProductManagment from "./components/Admin/ProductManagment.jsx";
 import EditProductPage from "./components/Admin/EditProductPage.jsx";
 import OrderManagment from "./components/Admin/OrderManagment.jsx";
 import ProtectedRoute from "./components/Common/ProtectedRoute.jsx";
+import ScrollToTop from "./components/Common/ScrollToTop.jsx";
 
 const App = () => {
   return (
     <div>
       <Toaster position="top-right" />
+      <ScrollToTop/>
       <Routes>
         <Route path="/" element={<UserLayout />}>
           <Route index element={<Home />} />
