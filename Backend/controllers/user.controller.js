@@ -56,6 +56,7 @@ export const login = async (req, res) => {
   console.log("Name : ", email, "Email : ", password);
   try {
     const user = await User.findOne({ email });
+    console.log("User : ",user)
     if (!user) {
       throw new apiError(400, "Email not exist");
     }
@@ -72,7 +73,7 @@ export const login = async (req, res) => {
       sameSite: "None", // REQUIRED for cross-origin cookies
     };
     const selectedUser = await User.findById(user._id).select(
-      "-password -refreshtoken"
+      "-password -refreshToken"
     );
     console.log("Selected User : ", selectedUser);
     return res
