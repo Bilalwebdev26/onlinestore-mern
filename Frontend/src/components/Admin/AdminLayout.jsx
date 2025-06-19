@@ -1,40 +1,45 @@
-import React, { useState } from 'react'
+import React, { useState } from "react";
 import { FaBars } from "react-icons/fa6";
-import AdminSideBar from './AdminSideBar';
-import { Outlet } from 'react-router-dom';
+import AdminSideBar from "./AdminSideBar";
+import { Outlet } from "react-router-dom";
 const AdminLayout = () => {
-  const[isSideBarOpen,setIsSideBarOpen]=useState(false)
-  const toggleSideBar = ()=>{
-     setIsSideBarOpen(!isSideBarOpen)
-  }
+  const [isSideBarOpen, setIsSideBarOpen] = useState(false);
+  const toggleSideBar = () => {
+    setIsSideBarOpen(!isSideBarOpen);
+  };
   return (
-    <div className='min-h-screen  flex flex-col md:flex-row relative'>
+    <div className="min-h-screen  flex flex-col md:flex-row relative">
       {/* Mobile toggle button */}
       <div className="flex items-center md:hidden bg-gray-900 text-white z-20 p-3">
         <button onClick={toggleSideBar}>
-          <FaBars size={24}/>
+          <FaBars size={24} />
         </button>
-          <h1 className='ml-4 text-xl font-medium'>Admin Dashboard</h1>
+        <h1 className="ml-4 text-xl font-medium">Admin Dashboard</h1>
       </div>
       {/* Overlay for mobile sidebar */}
-      {isSideBarOpen &&(
-        <div className="fixed inset-0 z-10 bg-black opacity-50 md:hidden" onClick={toggleSideBar}></div>
-        
+      {isSideBarOpen && (
+        <div
+          className="fixed inset-0 z-10 bg-black opacity-50 md:hidden"
+          onClick={toggleSideBar}
+        ></div>
       )}
       {/* sidebar */}
-      <div className={`bg-gray-900 text-white w-64 h-screen fixed top-0 left-0 z-30 transform transition-transform duration-300 ${isSideBarOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0 md:static md:block`}>
-
-        <AdminSideBar/>
+      <div
+        className={`bg-gray-900 text-white w-64 h-screen fixed top-0 left-0 z-30 transform transition-transform duration-300 ${
+          isSideBarOpen ? "translate-x-0" : "-translate-x-full"
+        } md:translate-x-0 md:static md:block`}
+      >
+        <AdminSideBar />
       </div>
       {/* Main Content */}
       <div className="flex-grow p-6 overflow-auto">
-        <Outlet/>
+        <Outlet />
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default AdminLayout
+export default AdminLayout;
 
 // import React, { useState } from 'react';
 // import { FaBars } from "react-icons/fa6";
